@@ -24,7 +24,7 @@ public class Buffer extends ArrayList<Integer> {
         } else {
             System.out.println("He añadido " + num);
             this.add(num);
-            this.notifyAll();
+            this.notify();
         }
     }
 
@@ -33,7 +33,7 @@ public class Buffer extends ArrayList<Integer> {
             int num = this.get(0);
             this.remove(0);
             System.out.println("\t\t\t\t\t He consumido " + num);
-            this.notifyAll();
+            this.notify();
             return num;
         } else {
             System.out.println("Warning: Empty buffer!");

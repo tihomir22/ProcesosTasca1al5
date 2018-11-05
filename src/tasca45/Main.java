@@ -13,8 +13,8 @@ public class Main {
 
     public static void main(String args[]) {
         Buffer buf = new Buffer();
-        Productor prod = new Productor(buf, 1300);
-        Consumidor cons = new Consumidor(buf, 200);
+        Productor prod = new Productor(buf, 300);
+        Consumidor cons = new Consumidor(buf, 1200);
 
         prod.start();
         cons.start();
