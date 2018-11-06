@@ -5,23 +5,29 @@
  */
 package concesionariotasca3;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author mati
  */
-public class Motor extends Thread{
-    
+public class Motor extends Thread {
+
     private Coche coch;
-    
-    
-    public void run(){
-      
-             coch.añadirMotor();
-        
-      
-       
+
+    public void run() {
+        while (true) {
+            coch.añadirMotor();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Motor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
-    
+
     public Motor(Coche coch) {
         this.coch = coch;
         this.setName("motor");
@@ -39,8 +45,5 @@ public class Motor extends Thread{
     public String toString() {
         return "Motor{" + "coch=" + coch + '}';
     }
-    
-    
 
-   
 }

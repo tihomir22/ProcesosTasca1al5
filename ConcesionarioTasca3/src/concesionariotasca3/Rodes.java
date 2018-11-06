@@ -17,14 +17,14 @@ public class Rodes extends Thread {
     private Coche coch;
 
     public void run() {
-       
+        while (true) {
             try {
                 coch.añadirRodes();
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Rodes.class.getName()).log(Level.SEVERE, null, ex);
             }
-           
-        
+        }
 
     }
 

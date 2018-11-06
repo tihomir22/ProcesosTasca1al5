@@ -17,15 +17,14 @@ public class Accesoris extends Thread {
     private Coche coch;
 
     public void run() {
-     
+        while (true) {
             try {
                 coch.añadirAccesoris();
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Accesoris.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-        
-
+        }
     }
 
     public Accesoris(Coche coch) {

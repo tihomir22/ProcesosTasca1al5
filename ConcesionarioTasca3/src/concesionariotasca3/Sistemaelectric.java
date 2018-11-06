@@ -17,14 +17,14 @@ public class Sistemaelectric extends Thread {
     private Coche coch;
 
     public void run() {
-       
+        while (true) {
             try {
                 coch.añadirSistemaElectric();
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Sistemaelectric.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-        
+        }
 
     }
 

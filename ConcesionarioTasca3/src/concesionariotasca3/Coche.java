@@ -24,72 +24,87 @@ public class Coche {
 
     }
 
-    public synchronized void añadirMotor() {
-        while (true) {
-            if (this.listaPiezas.size() == 0) {
-                this.listaPiezas.add("motor");
-                this.motor = true;
-                System.out.println(this.toString());
-                this.notifyAll();
-                break;
-            }
+    public synchronized void añadirMotor() throws InterruptedException {
+
+        if (this.listaPiezas.size() == 0) {
+            this.listaPiezas.add("motor");
+            this.motor = true;
+            System.out.println(this.toString());
+            this.notifyAll();
+        } else {
+            this.wait();
         }
+
     }
 
     public synchronized void añadirSistemaElectric() throws InterruptedException {
-        while (true) {
-            if (this.motor == true) {
-                this.listaPiezas.add("sistemaElectric");
-                this.sistemaelectric = true;
-                System.out.println(this.toString());
-                this.notifyAll();
-                break;
-            } else {
-                this.wait();
-            }
+
+        if (this.motor == true) {
+            this.listaPiezas.add("sistemaElectric");
+            this.sistemaelectric = true;
+            this.motor = false;
+            System.out.println(this.toString());
+            this.notifyAll();
+        } else {
+            this.wait();
         }
+
     }
 
     public synchronized void añadirAccesoris() throws InterruptedException {
-        while (true) {
-            if (this.sistemaelectric == true) {
-                this.listaPiezas.add("accesoris");
-                this.accesoris = true;
-                System.out.println(this.toString());
-                this.notifyAll();
-                break;
-            } else {
-                this.wait();
-            }
+
+        if (this.sistemaelectric == true) {
+            this.listaPiezas.add("accesoris");
+            this.accesoris = true;
+            this.sistemaelectric = false;
+            System.out.println(this.toString());
+            this.notifyAll();
+        } else {
+            this.wait();
         }
+
     }
 
     public synchronized void añadirVidres() throws InterruptedException {
-        while (true) {
-            if (this.accesoris == true) {
-                this.listaPiezas.add("vidres");
-                this.vidres = true;
-                System.out.println(this.toString());
-                this.notifyAll();
-                break;
-            } else {
-                this.wait();
-            }
+
+        if (this.accesoris == true) {
+            this.listaPiezas.add("vidres");
+            this.vidres = true;
+            this.accesoris = false;
+            System.out.println(this.toString());
+            this.notifyAll();
+
+        } else {
+            this.wait();
         }
+
     }
 
     public synchronized void añadirRodes() throws InterruptedException {
-        while (true) {
-            if (this.vidres == true) {
-                this.listaPiezas.add("rodes");
-                this.rodes = true;
-                System.out.println(this.toString());
-                this.notifyAll();
-                break;
-            } else {
-                this.wait();
+
+        if (this.vidres == true) {
+            this.listaPiezas.add("rodes");
+            this.rodes = true;
+            System.out.println(this.toString());
+            this.vidres = false;
+            if (this.listaPiezas.size() == 5) {
+                this.nuevoCoche();
             }
+            this.notifyAll();
+        } else {
+            this.wait();
         }
+
+    }
+
+    public void nuevoCoche() {
+        System.out.println("Un coche se ha generado se hace otro");
+        this.listaPiezas.clear();
+        this.accesoris = false;
+        this.motor = false;
+        this.rodes = false;
+        this.sistemaelectric = false;
+        this.vidres = false;
     }
 
     public ArrayList<String> getListaPiezas() {
@@ -144,7 +159,5 @@ public class Coche {
     public String toString() {
         return "Coche{" + "listaPiezas=" + listaPiezas + '}';
     }
-
-   
 
 }
