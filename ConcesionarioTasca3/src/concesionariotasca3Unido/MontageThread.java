@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package concesionariotasca3;
+package concesionariotasca3Unido;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,42 +12,38 @@ import java.util.logging.Logger;
  *
  * @author mati
  */
-public class Motor extends Thread {
-
+public class MontageThread extends Thread {
+    
     private Coche coch;
-
+    private String nombre;
+    
     public void run() {
         while (true) {
             try {
-                coch.añadirMotor();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Motor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
+                coch.añadirPieza(this.getName());
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Motor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MontageThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
     }
-
-    public Motor(Coche coch) {
+    
+    public MontageThread(Coche coch, String nombre) {
         this.coch = coch;
-        this.setName("motor");
+        this.setName(nombre);
     }
-
+    
     public Coche getCoch() {
         return coch;
     }
-
+    
     public void setCoch(Coche coch) {
         this.coch = coch;
     }
-
+    
     @Override
     public String toString() {
-        return "Motor{" + "coch=" + coch + '}';
+        return "Vidres{" + "coch=" + coch + '}';
     }
-
+    
 }
