@@ -6,6 +6,10 @@
 package concesionariotasca3Unido;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
@@ -19,72 +23,82 @@ public class Coche {
     private boolean accesoris = false;
     private boolean vidres = false;
     private boolean rodes = false;
+    Lock lock = new ReentrantLock();
+    Condition condMotor = lock.newCondition();
+    Condition condRodes = lock.newCondition();
+    Condition condAccesoris = lock.newCondition();
+    Condition condSis = lock.newCondition();
+    Condition condVidres = lock.newCondition();
 
     public Coche() {
 
     }
 
-    public synchronized void añadirPieza(String nombreThread) throws InterruptedException {
-        switch (nombreThread) {
-            case "motor":
-                if (this.listaPiezas.size() == 0) {
-                    this.listaPiezas.add("motor");
-                    this.motor = true;
-                    System.out.println(this.toString());
-                    this.notifyAll();
-                } else {
-                    this.wait();
-                }
-                break;
-            case "rodes":
-                if (this.vidres == true) {
-                    this.listaPiezas.add("rodes");
-                    this.rodes = true;
-                    System.out.println(this.toString());
-                    this.vidres = false;
-                    if (this.listaPiezas.size() == 5) {
-                        this.nuevoCoche();
+    public void añadirPieza(String nombreThread) throws InterruptedException {
+        this.lock.tryLock(1000, TimeUnit.MILLISECONDS);
+        try {
+            switch (nombreThread) {
+                case "motor":
+                    if (this.listaPiezas.isEmpty()) {
+                        this.listaPiezas.add("motor");
+                        this.motor = true;
+                        System.out.println(this.toString());
+                        // this.cond.signal();
+                        this.condSis.signal();
+                    } else {
+
                     }
-                    this.notifyAll();
-                } else {
-                    this.wait();
-                }
-                break;
-            case "accesoris":
-                if (this.sistemaelectric == true) {
-                    this.listaPiezas.add("accesoris");
-                    this.accesoris = true;
-                    this.sistemaelectric = false;
-                    System.out.println(this.toString());
-                    this.notifyAll();
-                } else {
-                    this.wait();
-                }
-                break;
-            case "sistemaelectric":
-                if (this.motor == true) {
-                    this.listaPiezas.add("sistemaElectric");
-                    this.sistemaelectric = true;
-                    this.motor = false;
-                    System.out.println(this.toString());
-                    this.notifyAll();
-                } else {
-                    this.wait();
-                }
+                    break;
+                case "rodes":
+                    if (this.vidres == true) {
+                        this.listaPiezas.add("rodes");
+                        this.rodes = true;
+                        System.out.println(this.toString());
+                        this.vidres = false;
+                        if (this.listaPiezas.size() == 5) {
+                            this.nuevoCoche();
+                        }
+                    } else {
+                        this.condRodes.await();
+                    }
+                    break;
+                case "accesoris":
+                    if (this.sistemaelectric == true) {
+                        this.listaPiezas.add("accesoris");
+                        this.accesoris = true;
+                        this.sistemaelectric = false;
+                        System.out.println(this.toString());
+                        this.condVidres.signal();
+                    } else {
+                        this.condAccesoris.await();
+                    }
+                    break;
+                case "sistemaelectric":
+                    if (this.motor == true) {
+                        this.listaPiezas.add("sistemaElectric");
+                        this.sistemaelectric = true;
+                        this.motor = false;
+                        System.out.println(this.toString());
+                        this.condAccesoris.signal();
+                    } else {
+                        this.condSis.await();
+                    }
 
-                break;
-            case "vidres":
-                if (this.accesoris == true) {
-                    this.listaPiezas.add("vidres");
-                    this.vidres = true;
-                    this.accesoris = false;
-                    System.out.println(this.toString());
-                    this.notifyAll();
-
-                } else {
-                    this.wait();
-                }
-                break;
+                    break;
+                case "vidres":
+                    if (this.accesoris == true) {
+                        this.listaPiezas.add("vidres");
+                        this.vidres = true;
+                        this.accesoris = false;
+                        System.out.println(this.toString());
+                        this.condRodes.signal();
+                    } else {
+                        this.condVidres.await();
+                    }
+                    break;
+            }
+        } finally {
+            this.lock.unlock();
         }
     }
 
